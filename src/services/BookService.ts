@@ -17,8 +17,6 @@ class BookService {
         if (fields == '')
             fields = this.DEFAULT_FIELDS;
 
-            console.log('conditions---',conditions);
-            console.log('fields---',fields);
 
         try {
             const record = await BookModel.findOne(conditions)
@@ -96,14 +94,11 @@ class BookService {
     }
 
     async save(data: any) {
-        console.log('data2---',data);
         const doc = new BookModel(data);
-        console.log('doc----',doc);
         try {
             await doc.save();
             return doc;
         } catch (e) {
-            console.log('e---',e);
             return false;
         }
     }

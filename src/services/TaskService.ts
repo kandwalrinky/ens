@@ -5,7 +5,7 @@ import { countObject, nowTimeSpan } from "../helper/basic";
 
 class TaskService {
 
-    DEFAULT_FIELDS: string = 'template_name placeholders short_url channels createdAt updatedAt';
+    DEFAULT_FIELDS: string = 'task_name userid createdAt updatedAt';
 
     constructor() { }
 
@@ -16,6 +16,7 @@ class TaskService {
 
         if (fields == '')
             fields = this.DEFAULT_FIELDS;
+
 
         try {
             const record = await TaskModel.findOne(conditions)

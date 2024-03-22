@@ -3,10 +3,8 @@ import { ITask } from "../interfaces/Task";
 
 // 2. Create a Schema corresponding to the document interface.
 const schema = new Schema<ITask>({
-    template_name: { type: String, required: true, trim: true },
-    placeholders: { type: String, required: false },
-    short_url: { type: String, required: false },
-    channels: { type: Schema.Types.Mixed },
+    task_name: { type: String, required: true, trim: true },
+    userid: { type: String, required: false },
     createdAt: Number,
     updatedAt: Number,
     deleted: { type: Number, default: 0 }

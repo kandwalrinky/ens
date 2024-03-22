@@ -21,7 +21,7 @@ class BookController {
 
             if (!req.params.id) {
 
-                let data:any = {
+                let data: any = {
                     book_name: req.body.book_name,
                     author: req.body.author,
                     userid: req.body.userid
@@ -36,14 +36,11 @@ class BookController {
 
 
             if (req.params.id) {
-                console.log('bookid---',req.params.id);
-                console.log('req.query------',req.query);
-                console.log('req.body------',req.body);
                 const existBook: any = await bookService.findRow({ _id: req.params.id, userid: req.body.userid }, "book_name");
                 if (!existBook) {
                     return errorRes(res, "No Book found of user", HttpStatusCode.NOT_FOUND);
                 }
-                let updata:any = {
+                let updata: any = {
                     book_name: req.body.book_name,
                     author: req.body.author
                 }
@@ -75,15 +72,25 @@ class BookController {
 
         try {
 
-            const existBook: any = await bookService.findRow({ id: req.params.id });
+            const existBook: any = await bookService.findRow({ _id: req.params.id });
 
             if (!existBook) {
                 return errorRes(res, "No Book found", HttpStatusCode.NOT_FOUND);
             }
 
-            const result = await bookService.remove(req.params.id);
-            if (!result) {
-                return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
+            if (req.body.role == 'admin') {
+
+                const result = await bookService.remove(req.params.id);
+                if (!result) {
+                    return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
+                }
+
+            }
+
+            else {
+
+                return errorRes(res, "Admin User can delete the book", HttpStatusCode.NOT_FOUND);
+
             }
 
             return successRes(res, "Record Deleted Successfully!", HttpStatusCode.OK);
@@ -120,31 +127,6 @@ class BookController {
         }
     }
 
-
-    async show(req: Request, res: Response) {
-
-        const errors = validationResult(req).formatWith(({ msg }) => msg);
-
-        if (!errors.isEmpty()) {
-            return validationError(res, errors.array().toString());
-        }
-
-        try {
-
-            const result: any = await bookService.findRow(req.body);
-
-            if (!result) {
-                return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
-            }
-
-            return successRes(res, result, HttpStatusCode.OK);
-
-        } catch (err) {
-
-            return errorRes(res, err.message, HttpStatusCode.BAD_REQUEST);
-
-        }
-    }
 
 }
 
