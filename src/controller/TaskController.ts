@@ -21,20 +21,29 @@ class TaskController {
 
             if (!req.params.id) {
 
-                const templateSave: any = await taskService.save(req.body);
+                let data: any = {
+                    task_name: req.body.task_name,
+                    userid: req.body.userid
+                }
 
-                if (templateSave) {
-                    return successRes(res, templateSave, HttpStatusCode.OK);
+                const TaskSave: any = await taskService.save(data);
+
+                if (TaskSave) {
+                    return successRes(res, TaskSave, HttpStatusCode.OK);
                 }
             }
 
 
             if (req.params.id) {
-                const existRule: any = await taskService.findRow({ id: req.params.id, user_id: req.body.user_id }, "id,filter_name");
-                if (!existRule) {
-                    return errorRes(res, "No template found", HttpStatusCode.NOT_FOUND);
+                const existTask: any = await taskService.findRow({ _id: req.params.id, userid: req.body.userid }, "Task_name");
+                if (!existTask) {
+                    return errorRes(res, "No Task found of user", HttpStatusCode.NOT_FOUND);
                 }
-                let update: any = await taskService.update(req.params.id, req.body);
+                let updata: any = {
+                    Task_name: req.body.Task_name,
+                    author: req.body.author
+                }
+                let update: any = await taskService.update(req.params.id, updata);
                 if (update) {
                     return successRes(res, update, HttpStatusCode.OK);
                 }
@@ -46,6 +55,7 @@ class TaskController {
         }
 
         catch (err) {
+            console.log(err.message);
             return errorRes(res, err.message, HttpStatusCode.BAD_REQUEST);
         }
     }
@@ -61,15 +71,25 @@ class TaskController {
 
         try {
 
-            const existTemplate: any = await taskService.findRow({ id: req.params.id });
+            const existTask: any = await taskService.findRow({ _id: req.params.id });
 
-            if (!existTemplate) {
-                return errorRes(res, "No Template found", HttpStatusCode.NOT_FOUND);
+            if (!existTask) {
+                return errorRes(res, "No Task found", HttpStatusCode.NOT_FOUND);
             }
 
-            const result = await taskService.remove(req.params.id);
-            if (!result) {
-                return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
+            if (req.body.role == 'admin') {
+
+                const result = await taskService.remove(req.params.id);
+                if (!result) {
+                    return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
+                }
+
+            }
+
+            else {
+
+                return errorRes(res, "Admin User can delete the Task", HttpStatusCode.NOT_FOUND);
+
             }
 
             return successRes(res, "Record Deleted Successfully!", HttpStatusCode.OK);
@@ -92,32 +112,6 @@ class TaskController {
         try {
 
             const result: any = await taskService.findAll();
-
-            if (!result) {
-                return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);
-            }
-
-            return successRes(res, result, HttpStatusCode.OK);
-
-        } catch (err) {
-
-            return errorRes(res, err.message, HttpStatusCode.BAD_REQUEST);
-
-        }
-    }
-
-
-    async show(req: Request, res: Response) {
-
-        const errors = validationResult(req).formatWith(({ msg }) => msg);
-
-        if (!errors.isEmpty()) {
-            return validationError(res, errors.array().toString());
-        }
-
-        try {
-
-            const result: any = await taskService.findRow(req.body);
 
             if (!result) {
                 return errorRes(res, "Record does not exists!", HttpStatusCode.NOT_FOUND);

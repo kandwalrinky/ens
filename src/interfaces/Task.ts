@@ -1,9 +1,7 @@
 // 1. Create an interface representing a document in MongoDB.
 interface ITask {
-    template_name: string;
-    placeholders: string;
-    short_url: string;
-    channels: object;
+    task_name: string;
+    userid: string;
     createdAt: number;
     updatedAt: number;
     deleted: number;

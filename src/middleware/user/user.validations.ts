@@ -104,6 +104,21 @@ class UserValidation {
     ]
   }
 
+  createUpdateTask() {
+    return [
+    
+      check("task_name")
+      .trim()
+      .notEmpty()
+      .withMessage("task_name field couldn't be empty.")
+      .bail()
+      .isString()
+      .matches(/^[a-zA-Z0-9\s]+$/).withMessage("Special characters in task_name not allowed").bail(),
+
+
+    ]
+  }
+
   }
 
 export const userValidation = new UserValidation();
